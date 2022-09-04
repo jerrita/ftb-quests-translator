@@ -28,7 +28,7 @@ def translate(src: str):
     if src in trans_cache:
         res = trans_cache[src]
     else:
-        res = client.translate(src, dst=lang)
+        res = trans_cache[src] = client.translate(src, dst=lang)
 
     if debug:
         print(f'  {src[:30]} -> {res[:30]}')
