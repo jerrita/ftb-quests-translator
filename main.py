@@ -1,11 +1,10 @@
 import os
 import re
-import shutil
 
 from concurrent.futures import ThreadPoolExecutor
 
-from Translator import GoogleTranslator
-# from Translator import BaiduTranslator
+# from Translator import GoogleTranslator
+from Translator import BaiduTranslator
 # from priv import apikey, appid
 
 base = './quests/chapters'
@@ -13,8 +12,8 @@ lang = 'zh'
 out = 'out_chapters'
 debug = True
 
-client = GoogleTranslator()
-# client = BaiduTranslator(appid, apikey)
+# client = GoogleTranslator()
+client = BaiduTranslator(appid, apikey)
 
 trans_cache = {}
 
