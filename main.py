@@ -3,18 +3,18 @@ import re
 import shutil
 
 from concurrent.futures import ThreadPoolExecutor
-from baidu import Translator
-from priv import apikey, appid
 
-# from pygtrans import Translate
+from Translator import GoogleTranslator
+# from Translator import BaiduTranslator
+# from priv import apikey, appid
 
 base = './quests/chapters'
 lang = 'zh'
 out = 'out_chapters'
 debug = True
 
-# client = Translate()
-client = Translator(appid, apikey)
+client = GoogleTranslator()
+# client = BaiduTranslator(appid, apikey)
 
 trans_cache = {}
 
