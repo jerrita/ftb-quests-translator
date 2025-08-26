@@ -1,24 +1,23 @@
 import os
-import re
 
 from concurrent.futures import ThreadPoolExecutor
-
-# from Translator import GoogleTranslator
-from Translator import BaiduTranslator
+from Translator import GoogleTranslator
+# from Translator import BaiduTranslator
 # from priv import apikey, appid
+
+import ftb_snbt_lib as slib
 
 base = './quests/chapters'
 lang = 'zh'
 out = 'out_chapters'
 debug = True
 
-# client = GoogleTranslator()
-client = BaiduTranslator(appid, apikey)
+client = GoogleTranslator()
 
 trans_cache = {}
 
 
-def translate(src: str):
+def translate(src):
     if src.strip() == '':
         return ''
 
@@ -31,30 +30,24 @@ def translate(src: str):
 
     if debug:
         print(f'  {src[:30]} -> {res[:30]}')
-    return res
+    return slib.String(res)
 
 
 def trans_title(ctx):
-    titleRegex = r'title: ".*"'
-    titleRegexStr = r'title: "(.+)"'
-    titles = re.findall(titleRegex, ctx)
-    for i in titles:
-        src = re.match(titleRegexStr, i).group(1)
-        dst = translate(src)
-        ctx = ctx.replace(i, i.replace(src, dst))
+    ctx['title'] = translate(ctx['title'])
     return ctx
 
 
-def trans_desc(ctx):
-    descRegex = r'description: \[(?:\s*)?(?:".*"(?:\s*)?)+\]'
-    targets = re.findall(descRegex, ctx, )
-    for desc in targets:
-        desc_old = desc
-        srcs = re.findall('"(.+)"', desc)
-        for src in srcs:
-            dst = translate(src)
-            desc = desc.replace(src, dst)
-        ctx = ctx.replace(desc_old, desc)
+def trans_quests(ctx):
+    res = []
+    for quest in ctx['quests']:
+        quest = trans_title(quest)
+        work = []
+        for desc in quest['description']:
+            work.append(translate(desc))
+        quest['description'] = slib.List(work)
+        res.append(quest)
+    ctx['quests'] = slib.List(res)
     return ctx
 
 
@@ -65,12 +58,11 @@ def work_file(file_path):
             return file_path
 
         print('=>', file_path)
-        ctx = open(os.path.join(base, file_path), 'r', encoding='utf-8').read()
+        ctx = slib.load(
+            open(os.path.join(base, file_path), 'r', encoding='utf-8'))
         ctx = trans_title(ctx)
-        ctx = trans_desc(ctx)
-        fp = open(os.path.join(out, file_path), 'w', encoding='utf-8')
-        fp.write(ctx)
-        fp.close()
+        ctx = trans_quests(ctx)
+        slib.dump(ctx, open(os.path.join(out, file_path), 'w', encoding='utf-8'))
     return file_path
 
 
