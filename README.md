@@ -6,12 +6,13 @@
 
 - 硬编码翻译写入，省时省力 (i18n 去他妈)
 - 支持版本: 1.16+ ? (反正这个逻辑的都行)
-- 你可以自己重写翻译逻辑 (比如换成 pygtrans，当前是百度)
+- 默认 Async OpenAI 翻译器，一个大型包可以 10S 翻译完
+- 某格雷空岛包在 gpt-4o-mini 下大概用量为 $0.02
 
 ## 使用教程
 
 - 将你整合包的 quests 目录丢过来 (你也可以 ln)
-- 新建 prv.py，填入你的翻译 API (有白嫖额度，但质量不咋样)
+- 新建 priv.py，并在 main.py 配置你的 Translator
 - python main.py
 - (Optional) 备份原有 chapters
 - mv out_chapters chapters
@@ -21,5 +22,11 @@
 ## priv.py 格式
 
 ```python
+# baidu
 appid, apikey = 'xxx', 'xxx'
+
+# openai
+base_url = 'https://api.example.com/v1'
+api_key = 'sk-1145141919810'
 ```
+
