@@ -41,7 +41,7 @@ class OpenAITranslator(Translator):
         prompt = ' '.join([
             f"Please translate the following text to {dst}.",
             f"This text is from a minecraft FTB Quests' title/description, with modpack name `{self.modpack}`.",
-            f"Handle the tag syntax of Minecraft carefully."
+            f"Handle the tag syntax of Minecraft carefully. Do not translate roman numeral such as `I`"
             f"Only return the translated text without any explanation:\n\n{query}"
         ])
 

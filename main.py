@@ -27,7 +27,7 @@ trans_cache = {}
 
 async def translate(src):
     if src.strip() == '':
-        return ''
+        return slib.String('')
 
     res = ''
     if src in trans_cache:
