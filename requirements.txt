@@ -1,2 +1,3 @@
-requests
+aiohttp
+openai
 ftb-snbt-lib

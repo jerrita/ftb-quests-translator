@@ -1,3 +1,3 @@
 class Translator:
-    def translate(self, query: str, src='auto', dst='zh') -> str:
+    async def translate(self, query: str, src='auto', dst='zh') -> str:
         raise NotImplementedError

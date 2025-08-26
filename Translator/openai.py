@@ -1,4 +1,4 @@
-from openai import OpenAI
+from openai import AsyncOpenAI
 
 from translator import Translator
 
@@ -13,7 +13,7 @@ class OpenAITranslator(Translator):
             token (str): OpenAI API 令牌
             model (str): 使用的模型名称，默认为 'gpt-4o-mini'
         """
-        self.client = OpenAI(
+        self.client = AsyncOpenAI(
             base_url=base_url,
             api_key=api_key
         )
@@ -23,7 +23,7 @@ class OpenAITranslator(Translator):
     def set_modpack_name(self, modpack: str):
         self.modpack = modpack
 
-    def translate(self, query: str, src='auto', dst='zh-CN') -> str:
+    async def translate(self, query: str, src='auto', dst='zh-CN') -> str:
         """
         使用 OpenAI 模型进行翻译
 
@@ -46,7 +46,7 @@ class OpenAITranslator(Translator):
         ])
 
         try:
-            response = self.client.chat.completions.create(
+            response = await self.client.chat.completions.create(
                 model=self.model,
                 messages=[
                     {"role": "user", "content": prompt}
@@ -69,6 +69,10 @@ class OpenAITranslator(Translator):
             print(f"Translation error details: {e}")
             print(f"Query was: {query}")
             raise Exception(f"OpenAI translation failed: {str(e)}")
+
+    async def close(self):
+        """关闭异步客户端连接"""
+        await self.client.close()
 
 
 if __name__ == '__main__':
