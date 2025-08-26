@@ -3,9 +3,10 @@ import hashlib
 import json
 
 from urllib import parse
+from translator import Translator
 
 
-class Translator:
+class BaiduTranslator(Translator):
     appid: str
     apikey: str
 
@@ -19,13 +20,13 @@ class Translator:
                             headers={
                                 'Content-Type': 'application/x-www-form-urlencoded'
                             }, data=parse.urlencode({
-                'q': query,
-                'from': src,
-                'to': dst,
-                'appid': self.appid,
-                'salt': self.salt,
-                'sign': self.get_sign(query)
-            }))
+                                'q': query,
+                                'from': src,
+                                'to': dst,
+                                'appid': self.appid,
+                                'salt': self.salt,
+                                'sign': self.get_sign(query)
+                            }))
         return json.loads(res.text)['trans_result'][0]['dst']
 
     def __init__(self, appid, key):

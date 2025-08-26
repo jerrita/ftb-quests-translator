@@ -1,18 +1,23 @@
 import os
 
 from concurrent.futures import ThreadPoolExecutor
-from Translator import GoogleTranslator
-# from Translator import BaiduTranslator
-# from priv import apikey, appid
+from translator.openai import OpenAITranslator
 
 import ftb_snbt_lib as slib
 
+
+from priv import base_url, api_key
+
 base = './quests/chapters'
-lang = 'zh'
+lang = 'zh-CN'
 out = 'out_chapters'
 debug = True
 
-client = GoogleTranslator()
+client = OpenAITranslator(
+    base_url=base_url,
+    api_key=api_key,
+    modpack='Create: Above and Beyond'
+)
 
 trans_cache = {}
 
@@ -34,18 +39,23 @@ def translate(src):
 
 
 def trans_title(ctx):
-    ctx['title'] = translate(ctx['title'])
+    if 'title' in ctx:
+        ctx['title'] = translate(ctx['title'])
     return ctx
 
 
 def trans_quests(ctx):
+    if 'quests' not in ctx:
+        return
+
     res = []
     for quest in ctx['quests']:
         quest = trans_title(quest)
-        work = []
-        for desc in quest['description']:
-            work.append(translate(desc))
-        quest['description'] = slib.List(work)
+        if 'description' in quest:
+            work = []
+            for desc in quest['description']:
+                work.append(translate(desc))
+            quest['description'] = slib.List(work)
         res.append(quest)
     ctx['quests'] = slib.List(res)
     return ctx
