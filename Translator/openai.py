@@ -1,5 +1,6 @@
-from translator import Translator
 from openai import OpenAI
+
+from translator import Translator
 
 
 class OpenAITranslator(Translator):

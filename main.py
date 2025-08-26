@@ -1,22 +1,25 @@
 import os
-
 from concurrent.futures import ThreadPoolExecutor
-from translator.openai import OpenAITranslator
 
 import ftb_snbt_lib as slib
 
-
 from priv import base_url, api_key
+from translator.openai import OpenAITranslator
 
 base = './quests/chapters'
 lang = 'zh-CN'
 out = 'out_chapters'
+dual_lang = False  # 是否启用双语
 debug = True
+
+modpack = slib.load(
+    open('./quests/data.snbt', 'r', encoding='utf-8'))['title']
+print('Modpack:', modpack)
 
 client = OpenAITranslator(
     base_url=base_url,
     api_key=api_key,
-    modpack='Create: Above and Beyond'
+    modpack=modpack
 )
 
 trans_cache = {}
@@ -27,7 +30,6 @@ def translate(src):
         return ''
 
     res = ''
-    # res = client.translate(src, target=lang).translatedText
     if src in trans_cache:
         res = trans_cache[src]
     else:
@@ -40,7 +42,11 @@ def translate(src):
 
 def trans_title(ctx):
     if 'title' in ctx:
-        ctx['title'] = translate(ctx['title'])
+        if dual_lang:
+            ctx['title'] = ctx['title'] + ' / ' + translate(ctx['title'])
+        else:
+            ctx['title'] = translate(ctx['title'])
+        ctx['title'] = slib.String(ctx['title'])
     return ctx
 
 
@@ -54,6 +60,8 @@ def trans_quests(ctx):
         if 'description' in quest:
             work = []
             for desc in quest['description']:
+                if dual_lang:
+                    work.append(desc)
                 work.append(translate(desc))
             quest['description'] = slib.List(work)
         res.append(quest)
@@ -83,7 +91,7 @@ def main():
     if not os.path.exists(out):
         os.mkdir(out)
 
-    with ThreadPoolExecutor(max_workers=3) as executor:
+    with ThreadPoolExecutor(max_workers=8) as executor:
         result = executor.map(work_file, files)
         for res in result:
             print('[Done]', res)

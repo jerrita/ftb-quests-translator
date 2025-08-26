@@ -1,8 +1,9 @@
-import requests
 import hashlib
 import json
-
 from urllib import parse
+
+import requests
+
 from translator import Translator
 
 

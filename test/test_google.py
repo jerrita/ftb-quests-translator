@@ -2,6 +2,7 @@ import unittest
 
 from Translator import GoogleTranslator
 
+
 class TestGoogleTranslator(unittest.TestCase):
 
     def setUp(self):
